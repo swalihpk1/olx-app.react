@@ -1,9 +1,36 @@
-import React from 'react';
-
+import React, { useContext, useEffect, useState } from 'react';
 import Heart from '../../assets/Heart';
+import { firebaseContext } from '../../store/Context';
+import { ColorRing } from 'react-loader-spinner';
 import './Post.css';
+import { PostContext } from '../../store/PostContest';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 function Posts() {
+  const { firebase } = useContext(firebaseContext);
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { setPostDetails } = useContext(PostContext)
+
+  const history = useHistory();
+
+  useEffect(() => {
+    firebase.firestore().collection('products').get()
+      .then((snapShot) => {
+        const allProducts = snapShot.docs.map((product) => {
+          return {
+            ...product.data(),
+            id: product.id
+          };
+        });
+        setProducts(allProducts);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching products:', error);
+        setIsLoading(false);
+      });
+  }, [firebase]);
 
   return (
     <div className="postParentDiv">
@@ -13,24 +40,33 @@ function Posts() {
           <span>View more</span>
         </div>
         <div className="cards">
-          <div
-            className="card"
-          >
-            <div className="favorite">
-              <Heart></Heart>
+          {isLoading ? (
+            <div className="loader">
+              <ColorRing />
             </div>
-            <div className="image">
-              <img src="../../../Images/R15V3.jpg" alt="" />
-            </div>
-            <div className="content">
-              <p className="rate">&#x20B9; 250000</p>
-              <span className="kilometer">Two Wheeler</span>
-              <p className="name"> YAMAHA R15V3</p>
-            </div>
-            <div className="date">
-              <span>Tue May 04 2021</span>
-            </div>
-          </div>
+          ) : (
+            products.map(product => (
+              <div onClick={() => {
+                setPostDetails(product)
+                history.push('/view')
+              }} className="card" key={product.id}>
+                <div className="favorite">
+                  <Heart />
+                </div>
+                <div className="image">
+                  <img src={product.url} alt="" />
+                </div>
+                <div className="content">
+                  <p className="rate">&#x20B9; {product.price} </p>
+                  <span className="kilometer">{product.category} </span>
+                  <p className="name"> {product.name} </p>
+                </div>
+                <div className="date">
+                  <span>{product.createdAt} </span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
       <div className="recommendations">
@@ -38,22 +74,33 @@ function Posts() {
           <span>Fresh recommendations</span>
         </div>
         <div className="cards">
-          <div className="card">
-            <div className="favorite">
-              <Heart></Heart>
+          {isLoading ? (
+            <div className="loader">
+              <ColorRing />
             </div>
-            <div className="image">
-              <img src="../../../Images/R15V3.jpg" alt="" />
-            </div>
-            <div className="content">
-              <p className="rate">&#x20B9; 250000</p>
-              <span className="kilometer">Two Wheeler</span>
-              <p className="name"> YAMAHA R15V3</p>
-            </div>
-            <div className="date">
-              <span>10/5/2021</span>
-            </div>
-          </div>
+          ) : (
+            products.map(product => (
+              <div onClick={() => {
+                setPostDetails(product)
+                history.push('/view')
+              }} className="card" key={product.id}>
+                <div className="favorite">
+                  <Heart />
+                </div>
+                <div className="image">
+                  <img src={product.url} alt="" />
+                </div>
+                <div className="content">
+                  <p className="rate">&#x20B9; {product.price} </p>
+                  <span className="kilometer">{product.category} </span>
+                  <p className="name"> {product.name} </p>
+                </div>
+                <div className="date">
+                  <span>{product.createdAt} </span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
@@ -61,3 +108,4 @@ function Posts() {
 }
 
 export default Posts;
+

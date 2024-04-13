@@ -4,7 +4,9 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Signup from './Pages/Signup'
 import Login from './Pages/Login'
 import Home from './Pages/Home';
-// import Home from './Pages/Home';
+import Create from './Pages/Create';
+import View from './Pages/ViewPost';
+import Post from './store/PostContest'
 import { AuthContext, firebaseContext } from './store/Context';
 
 function App() {
@@ -19,25 +21,30 @@ function App() {
 
   return (
     <div>
-      <Router>
-        <Route exact path='/'>
-          <Home />
-        </Route>
+      <Post>
+        <Router>
+          <Route exact path='/'>
+            <Home />
+          </Route>
 
-        <Route path='/signup'>
-          <Signup />
-        </Route>
+          <Route path='/signup'>
+            <Signup />
+          </Route>
 
-        <Route path='/login'>
-          <Login />
-        </Route>
+          <Route path='/login'>
+            <Login />
+          </Route>
 
-        <Route path='/create'>
-          <Create />
-        </Route>
+          <Route path='/create'>
+            <Create />
+          </Route>
 
-      </Router>
+          <Route path='/view'>
+            <View />
+          </Route>
 
+        </Router>
+      </Post>
     </div>
   );
 }

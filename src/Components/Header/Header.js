@@ -5,19 +5,14 @@ import Search from '../../assets/Search';
 import Arrow from '../../assets/Arrow';
 import SellButton from '../../assets/SellButton';
 import SellButtonPlus from '../../assets/SellButtonPlus';
-import { AuthContext, firebaseContext, } from '../../store/Context';
-import { Link, useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { AuthContext, firebaseContext } from '../../store/Context';
+import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function Header() {
   const { user } = useContext(AuthContext)
-  const firebase = useContext(firebaseContext)
+  const { firebase } = useContext(firebaseContext)
   const history = useHistory();
-
-  const handleSignOut = () => {
-    // firebase.auth().signOut().
-    //   alert("Logout Successful!");
-    // history.push('/login');
-  }
 
   return (
     <div className="headerParentDiv">
@@ -46,17 +41,22 @@ function Header() {
           <Arrow></Arrow>
         </div>
         <div className="loginPage">
-          <span>{user ? ` welcome!  ${user.displayName} ` : <Link to='/login'>Login</Link>}</span>
+          <span>
+            {user ? `Hello ${user.displayName}` : <Link to='/login'>Login</Link>}
+          </span>
           <hr />
         </div>
-        {user && (
-          <span onClick={handleSignOut}>Logout</span>
-        )}
+        {user && <span onClick={() => {
+          firebase.auth().signOut();
+          history.push('/login')
+
+        }}>Logout</span>}
+
         <div className="sellMenu">
           <SellButton></SellButton>
           <div className="sellMenuContent">
             <SellButtonPlus></SellButtonPlus>
-            <span>SELL</span>
+            <Link to="/create"><span>SELL</span></Link>
           </div>
         </div>
       </div>
